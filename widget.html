@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Firebase Data as a List</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column; /* Allows control over top bar and frame positioning */
+            align-items: center; /* Center horizontally */
+        }
+
+        .top-bar {
+            background-color: black;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            margin-left: 30px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000; /* Ensure it stays on top of other elements */
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background-color: black;
+            color: white;
+            position: fixed;
+            top: 60px; /* Sidebar appears just below the top bar */
+            left: 0; /* Sidebar is visible by default */
+            height: calc(100% - 60px); /* Adjust height to exclude the top bar */
+            padding: 15px;
+            box-sizing: border-box;
+            transition: 0.3s ease; /* Smooth transition for sliding */
+        }
+
+        .sidebar.hidden {
+            left: -250px; /* Sidebar slides out of view when hidden */
+        }
+
+        .sidebar a {
+            color: white;
+            display: flex; /* Use flexbox to align items */
+            align-items: center; /* Center items vertically */
+            padding: 10px 0;
+            text-decoration: none;
+        }
+
+        .sidebar img {
+            width: 20px; /* Adjust size of images */
+            height: 20px;
+            margin-bottom: 12px;
+            margin-right: 10px; /* Space between image and text */
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        /* Control Frame */
+        .control-frame {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px; /* Optional: adds rounded corners */
+            width: 100%;
+            max-width: 600px; /* Limits the width to avoid stretching on large screens */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: adds shadow for depth */
+            margin-top: 80px; /* Adds space from the top bar */
+        }
+
+        .header-frame button,
+        .control-frame button {
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .control-frame #stopSmsButton {
+            background-color: gray;
+        }
+
+        .control-frame #sendSmsButton {
+            background-color: gray;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        /* Black box with text */
+        .black-box {
+            height: 400px;
+            background-color: rgb(236, 202, 4);
+            color: black;
+            padding: 20px;
+            text-align: center;
+            margin-left: 80px;
+           margin-top: 120px;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .black-box h1 {
+            font-size: 28px;
+            margin: 20;
+            font-weight: bold;
+        }
+
+        .black-box p {
+            font-size: 20px;
+            margin: 20px 0;
+           
+        }
+
+        .black-box .highlight {
+            color: red; /* Highlighted text */
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .menu-link {
+    display: block;
+    padding: 10px 0;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    border-top: 1px solid white; /* Adds the bar above */
+    margin-top: 20px; /* Optional: adds space between the previous item */
+}
+
+.menu-link:hover {
+    background-color: #575757; /* Hover effect */
+}
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <span>
+            <img src="image/logo.jpeg" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 8px;">
+        </span>
+        <span id="menuIcon" class="menu-icon" style="margin-left: 10px;">&#9776;</span>
+        <span style="margin-left: 10px;"></span>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <a href="widget.html">
+            <img src="image/widget.png" alt="number change"> 
+        </a>
+        <a href="numberchange.html">
+            <img src="image/setting.png" alt="Message Icon"> 
+        </a>
+        <a href="details.html">
+            <img src="image/msgsms.png" alt="Telegram Icon"> 
+        </a>
+        <a href="message.html">
+            <img src="image/msgsms.png" alt="Telegram Icon"> 
+        </a>
+        <a href="index.html" >
+            <img src="image/exit1.png" alt="Exit Icon"> 
+        </a>
+        <a href="https://wa.me/8240338785">
+            <img src="image/wp.png" alt="WhatsApp Icon"> 
+        </a>
+        <a href="#"><img src="image/tele1.png" alt="count"></a>
+        <a href="#" class="menu-link">
+            Menu
+        </a>
+        
+
+        <a href="#" id="clearAllDataButton">
+            <img src="image/clear.jpeg" alt="Telegram Icon">
+            </a> 
+
+        <a href="passwordchange.html">
+            <img src="image/arrow.png" alt="Exit Icon"> 
+        </a>
+
+        <a href="#">
+            <img src="image/down.png" alt="Exit Icon"> 
+        </a>
+        
+
+    </div>
+
+    <!-- Black Box with Text (Centered) -->
+    <div class="black-box">
+        <h1>Welcome to </h1><h1><span class="highlight">DEV Panel</span></h1></h1>
+        <p>Your current plan is active <span class="highlight"></span></p>
+        <p>For renewal or support, contact WhatsApp</p>
+        <h1> </h1><h1><span class="highlight">8240338785</span></h1></h1>
+
+        <span>
+            <img src="image/logo.jpeg" alt="" style="width: 70px; height: 70px; vertical-align: middle; margin-right: 8px;">
+        </span>
+    </div>
+   
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-database.js";
+
+        
+
+
+        document.getElementById('menuIcon').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        });
+
+         setInterval(() => {
+        GetStudents();
+    }, 1); // Refresh every 10,000 milliseconds (10 seconds)
+
+    GetStudents(); 
+        
+    </script>
+</body>
+</html>

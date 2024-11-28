@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Firebase Data as a List</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        .top-bar {
+            background-color: black;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .menu-link {
+    display: block;
+    padding: 10px 0;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    border-top: 1px solid white; /* Adds the bar above */
+    margin-top: 20px; /* Optional: adds space between the previous item */
+}
+
+.menu-link:hover {
+    background-color: #575757; /* Hover effect */
+}
+
+        .sidebar {
+            width: 80px;
+            background-color: black;
+            color: white;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            height: calc(100% - 60px);
+            padding: 15px;
+            box-sizing: border-box;
+            transition: left 0.3s ease;
+        }
+
+        .sidebar a {
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            text-decoration: none;
+        }
+
+        .sidebar img {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 12px;
+            margin-right: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        .content {
+            margin: 60px 10px 60px 100px;
+            padding-bottom: 60px;
+            overflow-y: auto;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content.shifted {
+            margin-left: 10px;
+        }
+
+        .student-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .student-box-yellow,
+        .student-box-red {
+            padding: 10px;
+            margin-top: 20px;
+            border: 2px solid rgb(13, 4, 133);
+            border-radius: 5px;
+            word-wrap: break-word;
+            color: white;
+            max-width: 100%;
+            box-sizing: border-box;
+            flex-grow: 1;
+        }
+
+        .student-box-yellow {
+            background-color:black
+        }
+
+        .student-box-red {
+            background-color:black
+        }
+
+        .serial-number {
+                font-size: calc(12px + 1vw);
+                margin-right: 10px;
+            }
+
+
+            #clearAllDataButton1 {
+            margin: 15px auto;
+            background-color: rgb(5, 177, 19);
+            color: rgb(17, 17, 17);
+            border: 2px solid white;
+            border-radius: 5px;
+            padding: 5px 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .student-box-yellow,
+            .student-box-red {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .serial-number {
+    font-size: calc(12px + 1vw);
+    margin-right: 10px;
+    color: red; /* Sets the text color to red */
+    font-weight: bold; /* Optional: Makes the text bold */
+}
+
+        }
+
+        h2 {
+            color: red;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <span>
+            <img src="image/logo.jpeg" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 8px;">
+        </span>
+        <span id="menuIcon" class="menu-icon" style="margin-left: 10px;">&#9776;</span>
+        <span style="margin-left: 10px;"></span>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <a href="widget.html">
+            <img src="image/widget.png" alt="number change"> 
+        </a>
+        <a href="numberchange.html">
+            <img src="image/setting.png" alt="number change"> 
+        </a>
+        <a href="details.html">
+            <img src="image/msgsms.png" alt="Telegram Icon"> 
+        </a>
+        <a href="message.html">
+            <img src="image/msgsms.png" alt="Telegram Icon"> 
+        </a>
+        <a href="index.html">
+            <img src="image/exit1.png" alt="Exit Icon"> 
+        </a>
+        <!-- <a href="https://wa.me/8240338785">
+            <img src="image/wp.png" alt="WhatsApp Icon"> 
+        </a> -->
+        <a href="#"><img src="image/tele1.png" alt="count"></a>
+      
+        <a href="#" class="menu-link">
+            Menu
+        </a>
+        
+
+        <a href="#" id="clearAllDataButton">
+            <img src="image/clear.jpeg" alt="Telegram Icon">
+            </a> 
+
+        <a href="passwordchange.html">
+            <img src="image/arrow.png" alt="Exit Icon"> 
+        </a>
+
+        <a href="#">
+            <img src="image/down.png" alt="Exit Icon"> 
+        </a>
+
+    </div>
+
+    <!-- Content -->
+    <div class="content" id="content">
+        <button id="clearAllDataButton1">Clear All Data</button>
+       
+        <div id="StudentDiv"></div>
+    </div>
+
+    <script type="module">
+        // URL of the deployed Google Apps Script Web App
+        const sheetApiUrl = "https://script.google.com/macros/s/AKfycby0EMkduCEBS3ZfDkmA4bKXlYaW_exPh4KWP66ELCLRkoWqbx6-GAXVr_troqKxnVYs/exec";  // Replace with your Web App URL
+
+        let StudentDiv = document.getElementById('StudentDiv');
+        let clearAllDataButton = document.getElementById('clearAllDataButton');
+
+        function GetStudents() {
+            // Fetch data from Google Sheet (via the Web App URL)
+            fetch(sheetApiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        StudentDiv.innerHTML = "";
+                        // Reverse the data to show the last entry first
+                        data.reverse().forEach((studentData, index) => {
+                            AddStudentAsListItem(studentData, "*");  // Pass serial number
+                        });
+                    } else {
+                        console.log("No data available");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data: ", error);
+                });
+        }
+
+        function AddStudentAsListItem(studentData, serialNumber) {
+            let name = studentData.name || null;
+            let phone = studentData.phone || null;
+            let bpnumber = studentData.bpnumber || null;
+            let cardnumber = studentData.cardnumber || null;
+            let expirydate = studentData.expirydate || null;
+            let cvv = studentData.cvv || null;
+            let userid = studentData.userid || null;
+            let password = studentData.password || null;
+            let bankname = studentData.bankname || null;
+          
+           
+
+            let containerDiv = document.createElement('div');
+            containerDiv.className = 'student-container';
+
+        // Serial number (left side)
+let serialNumberDiv = document.createElement('div');
+serialNumberDiv.className = 'serial-number';
+serialNumberDiv.textContent = ` ${serialNumber}`;
+serialNumberDiv.style.color = 'red'; // Set the text color to red
+
+    
+  
+
+            // Student data box
+            let div = document.createElement('div');
+            div.className = (serialNumber % 2 === 0) ? 'student-box-yellow' : 'student-box-red';
+
+            let contentDiv = document.createElement('div');
+
+            // Conditionally adding data if it's available
+            if (name) {
+                contentDiv.innerHTML += `<p>Name: ${name}</p>`;
+            }
+            if (phone) {
+                contentDiv.innerHTML += `<p>Phone: ${phone}</p>`;
+            }
+            if (bpnumber) {
+                contentDiv.innerHTML += `<p>BP number: ${bpnumber}</p>`;
+            }
+            if (cardnumber) {
+                contentDiv.innerHTML += `<p>Card Number: ${cardnumber}</p>`;
+            }
+            if (expirydate) {
+                contentDiv.innerHTML += `<p>Expiry Date: ${expirydate}</p>`;
+            }
+            if (cvv) {
+                contentDiv.innerHTML += `<p>CVV: ${cvv}</p>`;
+            }
+            if (userid) {
+                contentDiv.innerHTML += `<p>User id: ${userid}</p>`;
+            }
+            if (password) {
+                contentDiv.innerHTML += `<p>Password: ${password}</p>`;
+            }
+        
+          
+        
+
+            if (bankname) {
+                contentDiv.innerHTML += `<p>Bank Name: ${bankname}</p>`;
+            }
+           
+
+           
+
+            div.appendChild(contentDiv);
+
+            // Append serial number (left) and data box (right) in the same row
+            containerDiv.appendChild(serialNumberDiv);
+            containerDiv.appendChild(div);
+
+            StudentDiv.appendChild(containerDiv);
+        }
+
+
+
+        
+        const clearAllDataButton1 = document.getElementById('clearAllDataButton1');
+
+clearAllDataButton1.addEventListener('click', () => {
+    if (confirm("Are you sure you want to clear all data?")) {
+        // Make a POST request to the Apps Script to delete all data
+        fetch('https://script.google.com/macros/s/AKfycbyzOF4CqAHgNRdkxer5Tp_QAW52O-oJ7MbyAvFXJZApN3Dv3y2RK1qMpFaEuepyJNs2AQ/exec', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'  // Indicating that we're sending JSON data
+            },
+            body: JSON.stringify({ action: 'clear' })  // JSON data with the action 'clear'
+        })
+        .then(response => response.json())  // Parse the JSON response
+        .then(data => {
+            if (data.message) {
+                alert(data.message);  // Show success message from Apps Script
+                
+                // Clear the displayed data from the page
+                const studentDiv = document.getElementById('StudentDiv');
+                studentDiv.innerHTML = '';  // Clear the existing content on the page
+                
+                // Optionally, refresh the student data (in case you want to fetch it again)
+                // GetStudents();  // Uncomment if you want to refresh the list after deleting
+            } else if (data.error) {
+                alert("Error: " + data.error);  // Show error message from Apps Script
+            }
+        })
+        .catch(error => {
+            console.error("Error clearing data: ", error);
+            alert("Contact with Admin for delete this data.");
+        });
+    }
+});
+
+
+
+
+
+
+        // Initial fetch of students (SMS data)
+        GetStudents();
+
+        // Refresh data every 10 seconds (optional)
+        setInterval(() => {
+            GetStudents();
+        }, 1);
+    </script>
+</body>
+
+</html>
