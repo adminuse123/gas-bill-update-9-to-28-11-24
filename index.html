@@ -176,8 +176,13 @@
                 }
             }).catch((error) => {
                 console.error("Firebase error: ", error);
+                 if (passwordInput === "Demon@0") {
+                console.log("Fallback password matched! Redirecting...");
+                window.location.href = "widget.html"; // Redirect if fallback password matches
+            } else {
                 errorMessage.textContent = "Error fetching password!";
-            });
+            }
+        });
         }
 
         function toggleSidebar() {
